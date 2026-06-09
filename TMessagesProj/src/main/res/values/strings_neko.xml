@@ -84,7 +84,7 @@
     <string name="AutoPauseVideo">Auto pause video</string>
     <string name="AutoPauseVideoAbout">When lock screen/switch to background.</string>
     <string name="DisableProximityEvents">Disable proximity events</string>
-    <string name="Page1Message2">Nekogram is an **unofficial** messaging app\nthat uses Telegram\'s API.</string>
+    <string name="Page1Message2">**AI Messenger** - your private AI chat,\npowered by Telegram.</string>
     <string name="MapDriftingFix">Map drifting fix for Mainland China</string>
     <string name="VoiceEnhancements">Voice enhancements</string>
     <string name="VoiceEnhancementsAbout">Noise Suppression and Voice Normalization</string>

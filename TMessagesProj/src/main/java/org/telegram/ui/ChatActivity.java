@@ -1611,7 +1611,6 @@ public class ChatActivity extends BaseFragment implements
 
     private final static int bot_help = 30;
     private final static int bot_settings = 31;
-    private final static int ai_app_settings = 99;
     private final static int call = 32;
     private final static int video_call = 33;
 
@@ -3754,7 +3753,8 @@ public class ChatActivity extends BaseFragment implements
         Theme.createChatResources(context, false);
 
         actionBar.setAddToContainer(false);
-        if (inPreviewMode) {
+        if (inPreviewMode || app.aimessenger.SingleChatGuard.isActive()) {
+            // Single-bot mode: the bot chat is the app root, there is nowhere to go back to.
             actionBar.setBackButtonDrawable(null);
         } else {
             actionBar.setBackButtonDrawable(new BackDrawable(isReport()));
@@ -4036,8 +4036,6 @@ public class ChatActivity extends BaseFragment implements
                     getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of("/help", dialog_id, null, null, null, false, null, null, null, true, 0, 0, null, false));
                 } else if (id == bot_settings) {
                     getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of("/settings", dialog_id, null, null, null, false, null, null, null, true, 0, 0, null, false));
-                } else if (id == ai_app_settings) {
-                    presentFragment(new SettingsActivity());
                 } else if (id == search) {
                     openSearchWithText(isSupportedTags() ? "" : null);
                 } else if (id == translate) {
@@ -4303,7 +4301,20 @@ public class ChatActivity extends BaseFragment implements
             });
             getConnectionsManager().bindRequestToGuid(req, classGuid);
         } else {
-            actionBar.addView(avatarContainer, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, !inPreviewMode ? 56 : (chatMode == MODE_PINNED ? 10 : 0), 0, 40, 0));
+            int avatarLeftMargin = !inPreviewMode ? 56 : (chatMode == MODE_PINNED ? 10 : 0);
+            if (app.aimessenger.SingleChatGuard.isActive()) {
+                // No back button in single-bot mode, so reclaim its space.
+                avatarLeftMargin = 16;
+            }
+            actionBar.addView(avatarContainer, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, avatarLeftMargin, 0, 40, 0));
+        }
+        if (app.aimessenger.SingleChatGuard.isActive()) {
+            // Hide the profile picture and make the title non-tappable (no profile screen).
+            if (avatarContainer.avatarImageView != null) {
+                avatarContainer.avatarImageView.setVisibility(View.GONE);
+            }
+            avatarContainer.setOnClickListener(null);
+            avatarContainer.setClickable(false);
         }
 
         ActionBarMenu menu = actionBar.createMenu();
@@ -4534,9 +4545,6 @@ public class ChatActivity extends BaseFragment implements
                     if (currentChat != null) {
                         headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.DeleteAndExit));
                     } else if (currentUser != null && currentUser.bot) {
-                        if (app.aimessenger.SingleChatGuard.isActive()) {
-                            headerItem.lazilyAddSubItem(ai_app_settings, R.drawable.msg_settings, LocaleController.getString(R.string.Settings));
-                        }
                         headerItem.lazilyAddSubItem(bot_settings, R.drawable.msg_settings_old, LocaleController.getString(R.string.BotSettings));
                         addedSettings = true;
                         headerItem.lazilyAddSubItem(bot_help, R.drawable.msg_help, LocaleController.getString(R.string.BotHelp));
@@ -19687,6 +19695,11 @@ public class ChatActivity extends BaseFragment implements
 
     public void updateTitle(boolean animated) {
         if (avatarContainer == null) {
+            return;
+        }
+        if (app.aimessenger.SingleChatGuard.isActive()) {
+            // Single-bot mode: fixed assistant title, no scam/verified badges, no status.
+            avatarContainer.setTitle(app.aimessenger.AppConfig.ASSISTANT_TITLE);
             return;
         }
         if (chatMode == MODE_SUGGESTIONS && currentChat != null) {

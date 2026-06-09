@@ -9,6 +9,9 @@ public final class AppConfig {
 
     public static final String APP_NAME = "AI Messenger";
 
+    // Fixed title shown in the bot chat's action bar (replaces the bot's real name).
+    public static final String ASSISTANT_TITLE = "Apex Assistant";
+
     public static final boolean FORCE_SINGLE_CHAT_MODE = true;
 
     // Username of the only bot this client is allowed to talk to. No leading @.

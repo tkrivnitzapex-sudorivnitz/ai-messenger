@@ -22,6 +22,7 @@ import org.telegram.ui.GroupCreateActivity;
 import org.telegram.ui.GroupCreateFinalActivity;
 import org.telegram.ui.MainTabsActivity;
 import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.SettingsActivity;
 import org.telegram.ui.TopicsFragment;
 
 import java.util.ArrayList;
@@ -152,17 +153,18 @@ public final class SingleChatGuard {
             return redirectToBot(account);
         }
         if (fragment instanceof ProfileActivity) {
+            // Allow only the bot's own profile-less chat; block self-profile (== settings) too.
             Bundle args = fragment.getArguments();
             long userId = args != null ? args.getLong("user_id", 0) : 0;
             long chatId = args != null ? args.getLong("chat_id", 0) : 0;
-            if (chatId == 0 && userId != 0
-                    && (isAllowedDialog(account, userId) || userId == UserConfig.getInstance(account).getClientUserId())) {
+            if (chatId == 0 && userId != 0 && isAllowedDialog(account, userId)) {
                 return fragment;
             }
             showBlockedToast();
             return null;
         }
-        if (fragment instanceof ContactsActivity
+        if (fragment instanceof SettingsActivity
+                || fragment instanceof ContactsActivity
                 || fragment instanceof CallLogActivity
                 || fragment instanceof GroupCreateActivity
                 || fragment instanceof GroupCreateFinalActivity
