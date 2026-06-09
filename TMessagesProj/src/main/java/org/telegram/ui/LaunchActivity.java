@@ -3980,6 +3980,15 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         boolean openDirect,
         byte[] pollOptionId
     ) {
+        if (app.aimessenger.SingleChatGuard.isActive() && code == null && loginToken == null
+                && !app.aimessenger.SingleChatGuard.isAllowedDeepLink(username)) {
+            // Single-bot mode: any link that does not point at the allowed bot is blocked.
+            if (progress != null) {
+                progress.end();
+            }
+            app.aimessenger.SingleChatGuard.showBlockedToast();
+            return;
+        }
         if (state == 0 && ChatActivity.SCROLL_DEBUG_DELAY && progress != null) {
             Runnable runnable = () -> runLinkRequest(intentAccount, username, group, sticker, emoji, botUser, botChat, botChannel, botChatAdminParams, message, contactToken, folderSlug, text, hasUrl, messageId, channelId, threadId, commentId, game, auth, lang, unsupportedUrl, code, loginToken, wallPaper, inputInvoiceSlug, uniqueGiftSlug, theme, voicechat, videochat, livestream, 1, videoTimestamp, setAsAttachBot, attachMenuBotToOpen, attachMenuBotChoose, botAppMaybe, botAppStartParam, progress, forceNotInternalForApps, storyId, liveStory, storyAlbumId, giftCollectionId, auctionSlug, stargiftPreviewSlug, isBoost, chatLinkSlug, botCompact, botFullscreen, openedTelegram, openProfile, forceRequest, referrer, taskId, openDirect, pollOptionId);
             progress.init();

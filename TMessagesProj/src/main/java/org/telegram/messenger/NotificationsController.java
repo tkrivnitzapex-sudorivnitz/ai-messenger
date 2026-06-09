@@ -1017,6 +1017,16 @@ public class NotificationsController extends BaseController {
             FileLog.d("NotificationsController: processNewMessages msgs.size()=" + (messageObjects == null ? "null" : messageObjects.size()) + " isLast=" + isLast + " isFcm=" + isFcm + ")");
         }
 
+        if (messageObjects != null && app.aimessenger.SingleChatGuard.isActive()) {
+            // Single-bot mode: never show notifications for other chats.
+            for (int i = messageObjects.size() - 1; i >= 0; i--) {
+                MessageObject messageObject = messageObjects.get(i);
+                if (messageObject == null || !app.aimessenger.SingleChatGuard.isAllowedDialog(currentAccount, messageObject.getDialogId())) {
+                    messageObjects.remove(i);
+                }
+            }
+        }
+
         if (messageObjects != null) {
             for (int i = 0; i < messageObjects.size(); ++i) {
                 final MessageObject messageObject = messageObjects.get(i);

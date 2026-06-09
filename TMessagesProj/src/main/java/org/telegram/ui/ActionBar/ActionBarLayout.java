@@ -1933,6 +1933,11 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
     @Override
     public boolean presentFragment(NavigationParams params) {
+        BaseFragment checkedFragment = app.aimessenger.SingleChatGuard.checkFragment(params.fragment);
+        if (checkedFragment == null) {
+            return false;
+        }
+        params.fragment = checkedFragment;
         BaseFragment fragment = params.fragment;
         boolean removeLast = params.removeLast;
         boolean forceWithoutAnimation = params.noAnimation;
@@ -2291,6 +2296,11 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
     @Override
     public boolean addFragmentToStack(BaseFragment fragment, int position) {
+        BaseFragment checkedFragment = app.aimessenger.SingleChatGuard.checkFragment(fragment);
+        if (checkedFragment == null) {
+            return false;
+        }
+        fragment = checkedFragment;
         if (delegate != null && !delegate.needAddFragmentToStack(fragment, this) || !fragment.onFragmentCreate()) {
             return false;
         }

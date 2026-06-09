@@ -50,7 +50,7 @@ android {
             if (localProperties.getProperty("storeFile") != null) {
                 signingConfig signingConfigs.sign
             }
-            applicationIdSuffix ".beta"
+
         }
 
         release {
@@ -86,10 +86,10 @@ android {
     splits.abi {
         var buildingBundle = gradle.startParameter.taskNames.any { it.startsWith("bundle") }
         enable !buildingBundle
-        universalApk true
+        universalApk false
 
         reset()
-        include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        include "arm64-v8a" // restore: "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
     }
     namespace 'org.telegram.messenger.regular'
 
@@ -105,7 +105,7 @@ androidComponents {
             def abi = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
             def abiName = abi ?: "universal"
             def baseVersionCode = output.versionCode.get()
-            output.outputFileName.set("Nekogram-${output.versionName.get()}-${baseVersionCode}-${abiName}.apk")
+            output.outputFileName.set("AIMessenger-${output.versionName.get()}-${baseVersionCode}-${abiName}.apk")
             output.versionCode.set(baseVersionCode * 10)
         }
     }

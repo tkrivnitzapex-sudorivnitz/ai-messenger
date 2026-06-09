@@ -1611,6 +1611,7 @@ public class ChatActivity extends BaseFragment implements
 
     private final static int bot_help = 30;
     private final static int bot_settings = 31;
+    private final static int ai_app_settings = 99;
     private final static int call = 32;
     private final static int video_call = 33;
 
@@ -4035,6 +4036,8 @@ public class ChatActivity extends BaseFragment implements
                     getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of("/help", dialog_id, null, null, null, false, null, null, null, true, 0, 0, null, false));
                 } else if (id == bot_settings) {
                     getSendMessagesHelper().sendMessage(SendMessagesHelper.SendMessageParams.of("/settings", dialog_id, null, null, null, false, null, null, null, true, 0, 0, null, false));
+                } else if (id == ai_app_settings) {
+                    presentFragment(new SettingsActivity());
                 } else if (id == search) {
                     openSearchWithText(isSupportedTags() ? "" : null);
                 } else if (id == translate) {
@@ -4531,6 +4534,9 @@ public class ChatActivity extends BaseFragment implements
                     if (currentChat != null) {
                         headerItem.lazilyAddSubItem(delete_chat, R.drawable.msg_leave, LocaleController.getString(R.string.DeleteAndExit));
                     } else if (currentUser != null && currentUser.bot) {
+                        if (app.aimessenger.SingleChatGuard.isActive()) {
+                            headerItem.lazilyAddSubItem(ai_app_settings, R.drawable.msg_settings, LocaleController.getString(R.string.Settings));
+                        }
                         headerItem.lazilyAddSubItem(bot_settings, R.drawable.msg_settings_old, LocaleController.getString(R.string.BotSettings));
                         addedSettings = true;
                         headerItem.lazilyAddSubItem(bot_help, R.drawable.msg_help, LocaleController.getString(R.string.BotHelp));
