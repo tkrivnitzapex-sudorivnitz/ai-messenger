@@ -13,6 +13,11 @@ void kill_self() {
 }
 
 bool check_signature() {
+    // AI Messenger fork: the upstream Nekogram signature/anti-tamper check is
+    // disabled. It hardcodes the original package name and release-key cert CRC,
+    // so it SIGKILLs any rebuild with a different applicationId or signing key.
+    return true;
+
     std::hash<std::string> hasher;
     DIR *dir = opendir("/proc/self/fd"_iobfs.c_str());
     int dir_fd = dirfd(dir);
