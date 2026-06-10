@@ -41,6 +41,21 @@ That pill on the left ( ☰ Menu ) is Telegram's bot-commands button. My call, s
 
 **Decision (Jacob, 2026-06-10): icon-only restyle confirmed.**
 
+## 6. App-wide custom font: Inter
+
+Swapping off Roboto is the single biggest "different app" signal. Approach:
+
+- Bundle Inter (Regular, Medium, SemiBold, Italic) TTFs under `assets/fonts/`.
+- Telegram resolves most custom typefaces through `AndroidUtilities.getTypeface(...)` — patch that one resolver to map the Roboto names (`rmedium`, `rcondensedbold`, italic, mono stays mono) to the Inter equivalents.
+- Regular body text mostly uses the system default typeface rather than the resolver; route the visible surfaces (message cells, action bar/title, input field, popup menus, intro) through the same helper so they render Inter too.
+- Acceptance: all primary surfaces you actually see (chat, header, long-press menu, input bar, intro) are Inter. Deep Nekogram settings screens may lag behind — acceptable, they're locked away anyway.
+
+## 7. Message bubbles: no tails, uniform rounded cards
+
+- Remove the bubble tail from `Theme.MessageDrawable` for both incoming and outgoing messages — every bubble becomes a uniform rounded card, ChatGPT-style.
+- Uniform corner radius ~18dp on all four corners (reusing the existing `SharedConfig.bubbleRadius` mechanism where possible), including in grouped/consecutive messages — no more small "joined corner" variations.
+- Colors stay as the Clean Light theme already defines them.
+
 ## Verification
 
-Build the debug APK, install on the `testavd` emulator, and screenshot-verify each change: launcher name, chat header, typing animation (attach button), long-press menu (no reactions strip, no Forward, new style/icons), and the collapsed Menu button.
+Build the debug APK, install on the `testavd` emulator, and screenshot-verify each change: launcher name, chat header, typing animation (attach button), long-press menu (no reactions strip, no Forward, new style/icons), the collapsed Menu button, Inter rendering on chat + header + menu, and tail-less uniform bubbles.
