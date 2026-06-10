@@ -7,10 +7,10 @@ package app.aimessenger;
  */
 public final class AppConfig {
 
-    public static final String APP_NAME = "AI Messenger";
+    public static final String APP_NAME = "Apex";
 
     // Fixed title shown in the bot chat's action bar (replaces the bot's real name).
-    public static final String ASSISTANT_TITLE = "Apex Assistant";
+    public static final String ASSISTANT_TITLE = "Apex";
 
     public static final boolean FORCE_SINGLE_CHAT_MODE = true;
 
