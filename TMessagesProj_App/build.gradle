@@ -86,7 +86,8 @@ android {
     splits.abi {
         var buildingBundle = gradle.startParameter.taskNames.any { it.startsWith("bundle") }
         enable !buildingBundle
-        universalApk false
+        // Apex: also emit a single universal APK (all included ABIs) for max device compatibility.
+        universalApk true
 
         reset()
         include "arm64-v8a", "x86_64" // restore: "armeabi-v7a", "arm64-v8a", "x86", "x86_64"

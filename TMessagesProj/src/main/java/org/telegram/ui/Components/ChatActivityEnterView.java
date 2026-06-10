@@ -5683,6 +5683,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         messageEditText.setInputType(commonInputType = (messageEditText.getInputType() | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE));
         updateFieldHint(false);
         messageEditText.setSingleLine(false);
+        messageEditText.setMinLines(3); // Apex: taller, composer-style input that feels intentional
         messageEditText.setMaxLines(6);
         messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         messageEditText.setGravity(Gravity.BOTTOM);

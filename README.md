@@ -22,6 +22,19 @@ To change the bot: edit `ALLOWED_BOT_USERNAME`, rebuild, reinstall. Cached
 resolution is stored per-username in shared prefs, so changing the username
 automatically re-resolves.
 
+### Rebinding the bot at runtime (no rebuild)
+
+You can point an already-installed app at a different bot with a cryptographically
+signed ADB command — useful when shipping the same APK to several users. Only the
+holder of the admin private key (never shipped in the APK) can authorise a change:
+
+```
+docs/admin/apex-sign-bot.sh <bot_username> | sh   # signs + runs the adb broadcast
+```
+
+Full details, security model, and key rotation are in
+[`docs/admin/README.md`](docs/admin/README.md).
+
 ## How enforcement works
 
 - `app/aimessenger/SingleChatGuard.java` — central policy:

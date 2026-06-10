@@ -78,6 +78,15 @@ public final class AppConfig {
     // Draw all message bubbles as uniform rounded cards with no tail.
     public static final boolean UNIFORM_BUBBLES = true;
 
+    // Hide the quoted reply-preview header on messages (the "in reply to <you>:
+    // <your question>" block). Makes the bot's answers feel like a conversation
+    // rather than a messaging thread.
+    public static final boolean HIDE_REPLY_QUOTE = true;
+
+    // Render incoming (bot) messages with no bubble background — the answer text
+    // sits directly on the chat, ChatGPT/Claude style.
+    public static final boolean BUBBLELESS_INCOMING = true;
+
     private AppConfig() {
     }
 

@@ -47,6 +47,7 @@ public class BotCommandsMenuView extends View {
     final RectF rectTmp = new RectF();
     final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    final TextPaint slashPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG); // Apex: "/" commands glyph
     final MenuDrawable backDrawable = new MenuDrawable() {
         @Override
         public void invalidateSelf() {
@@ -89,6 +90,9 @@ public class BotCommandsMenuView extends View {
         backDrawable.setRotation(0f, false);
         backDrawable.setCallback(this);
         textPaint.setTypeface(AndroidUtilities.bold());
+        slashPaint.setTypeface(AndroidUtilities.bold());
+        slashPaint.setTextSize(AndroidUtilities.dp(20));
+        slashPaint.setTextAlign(Paint.Align.CENTER);
         backDrawable.setRoundCap();
         backgroundDrawable = Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(16), Color.TRANSPARENT, Theme.getColor(Theme.key_featuredStickers_addButtonPressed));
         backgroundDrawable.setCallback(this);
@@ -126,6 +130,8 @@ public class BotCommandsMenuView extends View {
             webViewAnimation.setColorFilter(new PorterDuffColorFilter(textColor, PorterDuff.Mode.SRC_IN));
         }
         textPaint.setColor(textColor);
+        // Apex: the "/" blends with the other input-bar icons instead of the blue pill.
+        slashPaint.setColor(Theme.getColor(Theme.key_chat_messagePanelIcons));
     }
 
     int lastSize;
@@ -190,7 +196,9 @@ public class BotCommandsMenuView extends View {
                 textPaint.setAlpha((int) (255 * expandProgress));
             }
 
-            if (drawBackgroundDrawable) {
+            // Apex: in single-chat mode the commands button is a bare "/" that blends
+            // into the input bar, so skip the blue rounded pill background.
+            if (drawBackgroundDrawable && !app.aimessenger.AppConfig.isSingleChatModeEnabled()) {
                 rectTmp.set(0, 0, AndroidUtilities.dp(40) + (menuTextWidth + AndroidUtilities.dp(4)) * expandProgress, getMeasuredHeight());
                 canvas.drawRoundRect(rectTmp, AndroidUtilities.dp(16), AndroidUtilities.dp(16), paint);
                 backgroundDrawable.setBounds((int) rectTmp.left, (int) rectTmp.top, (int) rectTmp.right, (int) rectTmp.bottom);
@@ -208,6 +216,12 @@ public class BotCommandsMenuView extends View {
                 if (drawable.isRunning()) {
                     invalidate();
                 }
+            } else if (app.aimessenger.AppConfig.isSingleChatModeEnabled()) {
+                // Apex: draw a single "/" glyph instead of the hamburger menu icon.
+                Paint.FontMetrics fm = slashPaint.getFontMetrics();
+                float cx = AndroidUtilities.dp(20);
+                float cy = getMeasuredHeight() / 2f - (fm.ascent + fm.descent) / 2f;
+                canvas.drawText("/", cx, cy, slashPaint);
             } else {
                 canvas.save();
                 canvas.translate(AndroidUtilities.dp(8), AndroidUtilities.dp(4));

@@ -19041,7 +19041,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
         }
 
-        if ((!messageObject.isGiveawayResults() && (!isThreadChat || messageObject.isQuickReply() || isSavedChat || messageObject.getReplyTopMsgId(isForum) != 0 || isForumGeneral || isMonoForum) && messageObject.hasValidReplyMessageObject() || messageObject.messageOwner.fwd_from != null && messageObject.isDice() || (messageObject.messageOwner.reply_to != null && (messageObject.messageOwner.reply_to.story_id != 0 || !TextUtils.isEmpty(messageObject.messageOwner.reply_to.quote_text) || messageObject.messageOwner.reply_to.reply_from != null))) && !messageObject.isRepostPreview) {
+        if (app.aimessenger.AppConfig.HIDE_REPLY_QUOTE) {
+            // Apex: suppress the quoted reply-preview header so bot answers read as a conversation.
+            replyNameLayout = null;
+            replyTextLayout = null;
+        } else if ((!messageObject.isGiveawayResults() && (!isThreadChat || messageObject.isQuickReply() || isSavedChat || messageObject.getReplyTopMsgId(isForum) != 0 || isForumGeneral || isMonoForum) && messageObject.hasValidReplyMessageObject() || messageObject.messageOwner.fwd_from != null && messageObject.isDice() || (messageObject.messageOwner.reply_to != null && (messageObject.messageOwner.reply_to.story_id != 0 || !TextUtils.isEmpty(messageObject.messageOwner.reply_to.quote_text) || messageObject.messageOwner.reply_to.reply_from != null))) && !messageObject.isRepostPreview) {
             if (currentPosition == null || currentPosition.minY == 0) {
                 if (isSideMenued && !drawBackground || !messageObject.isAnyKindOfSticker() && messageObject.type != MessageObject.TYPE_ROUND_VIDEO || messageObject.type == MessageObject.TYPE_EMOJIS) {
                     namesOffset += dp(20) + (Theme.chat_replyTextPaint.getTextSize() + Theme.chat_replyNamePaint.getTextSize());
@@ -20455,7 +20459,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             roundVideoPlayPipFloat.set(0, true);
         }
 
-        if ((drawBackground || transitionParams.animateDrawBackground) && currentBackgroundDrawable != null && (currentPosition == null || isDrawSelectionBackground() && (currentMessageObject.isMusic() || currentMessageObject.isDocument())) && !(enterTransitionInProgress && !currentMessageObject.isVoice())) {
+        if ((drawBackground || transitionParams.animateDrawBackground) && currentBackgroundDrawable != null && (currentPosition == null || isDrawSelectionBackground() && (currentMessageObject.isMusic() || currentMessageObject.isDocument())) && !(enterTransitionInProgress && !currentMessageObject.isVoice()) && (currentMessageObject == null || currentMessageObject.isOutOwner() || !app.aimessenger.AppConfig.BUBBLELESS_INCOMING)) {
             float alphaInternal = this.alphaInternal;
             if (fromParent) {
                 alphaInternal *= getAlpha();
