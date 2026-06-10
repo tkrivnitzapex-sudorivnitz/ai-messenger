@@ -4838,6 +4838,23 @@ public class Theme {
 
         ThemeInfo applyingTheme = null;
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        if (!preferences.getBoolean("aimsgCleanLight", false)) {
+            // One-time reset so existing installs land on the Clean Light defaults:
+            // saved theme/night-theme/accent/wallpaper state would otherwise keep
+            // painting the chat with pre-redesign colors.
+            preferences.edit()
+                    .remove("theme")
+                    .remove("nighttheme")
+                    .remove("overrideThemeWallpaper")
+                    .remove("selectedBackground2")
+                    .putInt("selectedAutoNightType", AUTO_NIGHT_TYPE_NONE)
+                    .putBoolean("aimsgCleanLight", true)
+                    .commit();
+            themeConfig.edit()
+                    .remove("accents_bluebubbles.attheme")
+                    .remove("accent_current_bluebubbles.attheme")
+                    .commit();
+        }
         try {
             final ThemeInfo themeDarkBlue = themesDict.get("Dark Blue");
 
