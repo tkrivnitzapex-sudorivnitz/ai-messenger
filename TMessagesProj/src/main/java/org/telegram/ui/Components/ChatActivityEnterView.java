@@ -5597,6 +5597,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 return super.onPrivateIMECommand(action, data);
             }
         };
+        messageEditText.setTypeface(AndroidUtilities.regular());
         if (parentFragment != null && !isEditingBusinessLink()) {
             ImeHelper.enableSogouExpression(messageEditText);
             ViewCompat.setOnReceiveContentListener(messageEditText, new String[]{"image/gif", "image/*", "image/jpg", "image/png", "image/webp"}, (view, payload) -> {

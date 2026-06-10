@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.core.graphics.ColorUtils;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -100,6 +101,7 @@ public class ActionBarMenuSubItem extends FrameLayout {
         textView.setEllipsize(TextUtils.TruncateAt.END);
         textView.setTextColor(textColor);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+        textView.setTypeface(AndroidUtilities.regular());
         addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL));
 
         checkViewLeft = LocaleController.isRTL;
