@@ -56,6 +56,15 @@ Swapping off Roboto is the single biggest "different app" signal. Approach:
 - Uniform corner radius ~18dp on all four corners (reusing the existing `SharedConfig.bubbleRadius` mechanism where possible), including in grouped/consecutive messages — no more small "joined corner" variations.
 - Colors stay as the Clean Light theme already defines them.
 
+## 8. Audio player cleanup (added 2026-06-10, Jacob's request)
+
+In the bottom-sheet audio player (opened from the top playing strip):
+
+- Remove the **"+ Add to Profile"** button at the bottom of the player (`saveToProfileButton` in `AudioPlayerAlert.java`).
+- Remove the **three-dot options menu entirely** (`optionsButton`) — Forward, Share, Save to Music, Show in Chat, Chromecast all go; no menu remains.
+- Playback controls (repeat/shuffle, previous, play/pause, next) stay.
+- Gated by a new `AppConfig.MINIMAL_AUDIO_PLAYER` flag, same pattern as the other lockdowns.
+
 ## Verification
 
 Build the debug APK, install on the `testavd` emulator, and screenshot-verify each change: launcher name, chat header, typing animation (attach button), long-press menu (no reactions strip, no Forward, new style/icons), the collapsed Menu button, Inter rendering on chat + header + menu, and tail-less uniform bubbles.
