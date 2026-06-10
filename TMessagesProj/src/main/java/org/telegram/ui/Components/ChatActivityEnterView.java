@@ -5683,10 +5683,13 @@ public class ChatActivityEnterView extends FrameLayout implements
         messageEditText.setInputType(commonInputType = (messageEditText.getInputType() | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE));
         updateFieldHint(false);
         messageEditText.setSingleLine(false);
-        messageEditText.setMinLines(3); // Apex: taller, composer-style input that feels intentional
-        messageEditText.setMaxLines(6);
+        // Apex: a real composer — 4 typeable lines, cursor starting at the TOP-LEFT so the
+        // whole box reads as a waiting input area. The +/"/" buttons live in a row below
+        // (reserved via the edit text's bottom margin in createFrame/onMeasure).
+        messageEditText.setMinLines(4);
+        messageEditText.setMaxLines(8);
         messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        messageEditText.setGravity(Gravity.BOTTOM);
+        messageEditText.setGravity(Gravity.TOP | Gravity.LEFT);
         messageEditText.setPadding(0, dp(9), 0, dp(10));
         messageEditText.setBackgroundDrawable(null);
         messageEditText.setTextColor(getThemedColor(Theme.key_chat_messagePanelText));
@@ -5696,7 +5699,8 @@ public class ChatActivityEnterView extends FrameLayout implements
         messageEditText.setHintTextColor(getThemedColor(Theme.key_chat_messagePanelHint));
         messageEditText.setCursorColor(getThemedColor(Theme.key_chat_messagePanelCursor));
         messageEditText.setHandlesColor(getThemedColor(Theme.key_chat_TextSelectionCursor));
-        messageEditTextContainer.addView(messageEditText, 1, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 14, 0, isChat ? 50 : 2, 1.5f));
+        // Apex: top-aligned, with a 44dp bottom margin reserving the button row underneath.
+        messageEditTextContainer.addView(messageEditText, 1, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 14, 2, isChat ? 50 : 2, 44));
         messageEditText.setOnKeyListener(new OnKeyListener() {
 
             @Override
@@ -13915,29 +13919,25 @@ public class ChatActivityEnterView extends FrameLayout implements
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int wasHeight = textFieldContainer.getMeasuredHeight();
-        // Apex: reserve the far-left slot for the "+" upload button, then seat the
-        // commands ("/") button and the text field to its right.
+        // Apex composer: the text field spans the full width starting at the top-left
+        // corner (small fixed left margin), while the "+" and "/" buttons sit in the
+        // reserved row BELOW it (the edit text has a 44dp bottom margin). So the button
+        // widths no longer push the text inward — only the button positions use them.
         final int plusW = plusButton != null ? dp(DEFAULT_HEIGHT) : 0;
+        if (messageEditText != null) {
+            ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(14);
+        }
         if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() != null) {
             botCommandsMenuButton.measure(widthMeasureSpec, heightMeasureSpec);
             final int bcw = botCommandsMenuButton.getMeasuredWidth();
             ((MarginLayoutParams) botCommandsMenuButton.getLayoutParams()).leftMargin = plusW + dp(2);
             ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = plusW + dp(10) + bcw;
-            if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = plusW + dp(12) + bcw;
-            }
         } else if (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE) {
             int width = senderSelectView.getLayoutParams().width, height = senderSelectView.getLayoutParams().height;
             senderSelectView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
             ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = plusW + dp(16) + width;
-            if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = plusW + dp(16) + width;
-            }
         } else {
             ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = plusW + dp(3);
-            if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = plusW + dp(14);
-            }
         }
         updateBotCommandsMenuContainerTopPadding();
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
