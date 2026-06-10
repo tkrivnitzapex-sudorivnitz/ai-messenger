@@ -48,7 +48,7 @@ public class ThemeColors {
         defaultColors[key_dialogLineProgress] = TELEGRAM_COLOR;
         defaultColors[key_dialogLineProgressBackground] = 0xffdbdbdb;
         defaultColors[key_dialogButton] = TELEGRAM_COLOR_TEXT;
-        defaultColors[key_dialogButtonSelector] = 0x0f000000;
+        defaultColors[key_dialogButtonSelector] = 0xFFF3F4F6;
         defaultColors[key_dialogScrollGlow] = 0xfff5f6f7;
         defaultColors[key_dialogRoundCheckBox] = TELEGRAM_COLOR;
         defaultColors[key_dialogRoundCheckBoxCheck] = 0xffffffff;
@@ -197,10 +197,10 @@ public class ThemeColors {
         defaultColors[key_actionBarWhiteSelector] = 0x121a1d21;
         defaultColors[key_actionBarDefaultSearch] = DEFAULT_BLACK_TEXT;
         defaultColors[key_actionBarDefaultSearchPlaceholder] = 0xff9ca3af;
-        defaultColors[key_actionBarDefaultSubmenuItem] = DEFAULT_BLACK_TEXT;
-        defaultColors[key_actionBarDefaultSubmenuItemIcon] = DEFAULT_BLACK_TEXT;
-        defaultColors[key_actionBarDefaultSubmenuBackground] = 0xffffffff;
-        defaultColors[key_actionBarDefaultSubmenuSeparator] = 0xfff5f5f5;
+        defaultColors[key_actionBarDefaultSubmenuItem] = 0xFF111827;
+        defaultColors[key_actionBarDefaultSubmenuItemIcon] = 0xFF3B82F6;
+        defaultColors[key_actionBarDefaultSubmenuBackground] = 0xFFFFFFFF;
+        defaultColors[key_actionBarDefaultSubmenuSeparator] = 0xFFE5E7EB;
         defaultColors[key_actionBarActionModeDefaultSelector] = 0xffe2e2e2;
         defaultColors[key_actionBarActionModeReaction] = 0xfff0f0f0;
         defaultColors[key_actionBarActionModeReactionText] = 0xff82868a;
