@@ -184,9 +184,9 @@ public class ProfileNotificationsActivity extends BaseFragment implements Notifi
         ringtoneRow = -1;
         ringtoneInfoRow = -1;
 
-        ledRow = rowCount++;
-        colorRow = rowCount++;
-        ledInfoRow = rowCount++;
+        ledRow = -1;
+        colorRow = -1;
+        ledInfoRow = -1;
 
         customResetRow = -1;
         customResetShadowRow = -1;
