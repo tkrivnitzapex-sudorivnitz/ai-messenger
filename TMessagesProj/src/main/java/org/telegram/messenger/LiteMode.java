@@ -114,7 +114,7 @@ public class LiteMode {
                 onPowerSaverApplied(lastPowerSaverApplied = false);
             }
         }
-        return value;
+        return value & ~(FLAG_CHAT_BLUR | FLAG_LIQUID_GLASS);
     }
 
     private static int lastBatteryLevelCached = -1;
@@ -276,8 +276,10 @@ public class LiteMode {
             }
         }
 
+        defaultValue &= ~(FLAG_CHAT_BLUR | FLAG_LIQUID_GLASS);
+
         int prevValue = value;
-        value = preferences.getInt("lite_mode6", defaultValue);
+        value = preferences.getInt("lite_mode6", defaultValue) & ~(FLAG_CHAT_BLUR | FLAG_LIQUID_GLASS);
         if (loaded) {
             onFlagsUpdate(prevValue, value);
         }

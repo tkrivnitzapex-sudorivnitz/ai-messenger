@@ -1793,7 +1793,7 @@ public class SharedConfig {
     }
 
     public static boolean chatBlurEnabled() {
-        return canBlurChat() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BLUR);
+        return false;
     }
 
     public static class BackgroundActivityPrefs {

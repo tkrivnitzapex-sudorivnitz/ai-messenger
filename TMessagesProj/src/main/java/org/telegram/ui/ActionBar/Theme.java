@@ -10256,14 +10256,7 @@ public class Theme {
     }
 
     public static Drawable createDefaultWallpaper(int w, int h) {
-        MotionBackgroundDrawable motionBackgroundDrawable = new MotionBackgroundDrawable(0xffdbddbb, 0xff6ba587, 0xffd5d88d, 0xff88b884, w != 0);
-        if (w <= 0 || h <= 0) {
-            w = Math.min(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y);
-            h = Math.max(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y);
-        }
-        motionBackgroundDrawable.setPatternBitmap(34, SvgHelper.getBitmap(R.raw.default_pattern, w, h, Color.BLACK, 1f, SvgHelper.ScaleMode.ByWidth));
-        motionBackgroundDrawable.setPatternColorFilter(motionBackgroundDrawable.getPatternColor());
-        return motionBackgroundDrawable;
+        return new MotionBackgroundDrawable(0xFFF3F4F6, 0xFFF3F4F6, 0xFFF3F4F6, 0xFFF3F4F6, w != 0);
     }
 
     private static Bitmap loadScreenSizedBitmap(FileInputStream stream, int offset) {
