@@ -20,7 +20,6 @@ import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -63,7 +62,6 @@ import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Cells.UserCell2;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.ChatAvatarContainer;
-import org.telegram.ui.Components.Forum.ForumUtilities;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
@@ -151,41 +149,17 @@ public class ProfileNotificationsActivity extends BaseFragment implements Notifi
         }
 
         rowCount = 0;
-        if (addingException) {
-            avatarRow = rowCount++;
-            avatarSectionRow = rowCount++;
-        } else {
-            avatarRow = -1;
-            avatarSectionRow = -1;
-        }
-        generalRow = rowCount++;
-        if (addingException || topicId != 0) {
-            enableRow = rowCount++;
-        } else {
-            enableRow = -1;
-        }
+        avatarRow = -1;
+        avatarSectionRow = -1;
+        generalRow = -1;
+        enableRow = -1;
         storiesRow = -1;
-        if (!DialogObject.isEncryptedDialog(dialogId)) {
-            previewRow = rowCount++;
-            if (DialogObject.isUserDialog(dialogId)) {
-                storiesRow = rowCount++;
-            }
-        } else {
-            previewRow = -1;
-        }
-        soundRow = rowCount++;
-        vibrateRow = rowCount++;
-        if (DialogObject.isChatDialog(dialogId)) {
-            smartRow = rowCount++;
-        } else {
-            smartRow = -1;
-        }
-        if (Build.VERSION.SDK_INT >= 21) {
-            priorityRow = rowCount++;
-        } else {
-            priorityRow = -1;
-        }
-        priorityInfoRow = rowCount++;
+        previewRow = -1;
+        soundRow = -1;
+        vibrateRow = -1;
+        smartRow = -1;
+        priorityRow = -1;
+        priorityInfoRow = -1;
         boolean isChannel;
         if (DialogObject.isChatDialog(dialogId)) {
             TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialogId);
@@ -205,29 +179,17 @@ public class ProfileNotificationsActivity extends BaseFragment implements Notifi
             popupInfoRow = -1;
         }
 
-        if (DialogObject.isUserDialog(dialogId)) {
-            callsRow = rowCount++;
-            callsVibrateRow = rowCount++;
-            ringtoneRow = rowCount++;
-            ringtoneInfoRow = rowCount++;
-        } else {
-            callsRow = -1;
-            callsVibrateRow = -1;
-            ringtoneRow = -1;
-            ringtoneInfoRow = -1;
-        }
+        callsRow = -1;
+        callsVibrateRow = -1;
+        ringtoneRow = -1;
+        ringtoneInfoRow = -1;
 
-        ledRow = rowCount++;
-        colorRow = rowCount++;
-        ledInfoRow = rowCount++;
+        ledRow = -1;
+        colorRow = -1;
+        ledInfoRow = -1;
 
-        if (!addingException) {
-            customResetRow = rowCount++;
-            customResetShadowRow = rowCount++;
-        } else {
-            customResetRow = -1;
-            customResetShadowRow = -1;
-        }
+        customResetRow = -1;
+        customResetShadowRow = -1;
 
         boolean defaultEnabled = NotificationsController.getInstance(currentAccount).isGlobalNotificationsEnabled(dialogId, false, false);
         if (addingException) {
@@ -333,23 +295,21 @@ public class ProfileNotificationsActivity extends BaseFragment implements Notifi
 
         avatarContainer = new ChatAvatarContainer(context, null, false, resourcesProvider);
         avatarContainer.setOccupyStatusBar(!AndroidUtilities.isTablet());
+        avatarContainer.getAvatarImageView().setVisibility(View.GONE);
 
         actionBar.addView(avatarContainer, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, !inPreviewMode ? 56 : 0, 0, 40, 0));
         actionBar.setAllowOverlayTitle(false);
         if (dialogId < 0) {
             if (topicId != 0) {
                 TLRPC.TL_forumTopic forumTopic = getMessagesController().getTopicsController().findTopic(-dialogId, topicId);
-                ForumUtilities.setTopicIcon(avatarContainer.getAvatarImageView(), forumTopic, false, true, resourcesProvider);
                 avatarContainer.setTitle(forumTopic.title);
             } else {
                 TLRPC.Chat chatLocal = getMessagesController().getChat(-dialogId);
-                avatarContainer.setChatAvatar(chatLocal);
                 avatarContainer.setTitle(chatLocal.title);
             }
         } else {
             TLRPC.User user = getMessagesController().getUser(dialogId);
             if (user != null) {
-                avatarContainer.setUserAvatar(user);
                 avatarContainer.setTitle(ContactsController.formatName(user.first_name, user.last_name));
             }
         }

@@ -5983,6 +5983,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         if (audioVideoSendButton == null) {
             return;
         }
+        visible = false; // fork: round-video messages disabled, record button is voice-only
         isInVideoMode = visible;
 
         if (animated) {
@@ -6555,7 +6556,7 @@ public class ChatActivityEnterView extends FrameLayout implements
             setRecordVideoButtonVisible(false, false);
             return;
         }
-        hasRecordVideo = true;
+        hasRecordVideo = false; // fork: round-video messages disabled, record button is voice-only
         sendRoundEnabled = true;
         sendVoiceEnabled = true;
         boolean isChannel = false;
