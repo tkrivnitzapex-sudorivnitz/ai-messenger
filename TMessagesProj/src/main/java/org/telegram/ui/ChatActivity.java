@@ -4547,8 +4547,8 @@ public class ChatActivity extends BaseFragment implements
                     } else if (currentUser != null && currentUser.bot) {
                         headerItem.lazilyAddSubItem(bot_settings, R.drawable.msg_settings_old, LocaleController.getString(R.string.BotSettings));
                         addedSettings = true;
+                        // Single-bot mode: no Help, Report or Delete-and-block in the header menu.
                         if (!app.aimessenger.SingleChatGuard.isActive()) {
-                            // Single-bot mode: no Help, Report or Delete-and-block in the header menu.
                             headerItem.lazilyAddSubItem(bot_help, R.drawable.msg_help, LocaleController.getString(R.string.BotHelp));
                             if (!MessagesController.isSupportUser(currentUser)) {
                                 headerItem.lazilyAddSubItem(report, R.drawable.msg_report, LocaleController.getString(R.string.ReportBot)).setColors(getThemedColor(Theme.key_text_RedRegular), getThemedColor(Theme.key_text_RedRegular));
