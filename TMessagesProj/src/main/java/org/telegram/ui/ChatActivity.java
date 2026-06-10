@@ -21942,6 +21942,7 @@ public class ChatActivity extends BaseFragment implements
             }
             if ((updateMask & MessagesController.UPDATE_MASK_USER_PRINT) != 0) {
                 updateSubtitle = true;
+                updateTypingIndicatorRow();
             }
             if ((updateMask & MessagesController.UPDATE_MASK_CHAT) != 0 && currentChat != null) {
                 boolean fwdBefore = isPeerNoForwards();
@@ -36795,6 +36796,47 @@ public class ChatActivity extends BaseFragment implements
 
     private boolean hasSendingMessagesInBotForum;
 
+    // Apex: whether to render the inline "agent is typing" bubble at the bottom of
+    // the message list. Limited to 1:1/bot chats in the default chat mode.
+    private boolean shouldShowTypingRow() {
+        if (chatMode != MODE_DEFAULT) {
+            return false;
+        }
+        if (currentChat != null) {
+            return false;
+        }
+        try {
+            return getMessagesController().getPrintingString(getDialogId(), getThreadId(), false) != null;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
+    // Apex: drives whether the inline typing bubble is currently in the adapter.
+    private boolean typingRowShown;
+
+    // Apex: refresh the inline typing row when the peer's typing state changes, and
+    // keep it visible by snapping to the bottom if the user was already there.
+    private void updateTypingIndicatorRow() {
+        if (chatAdapter == null || chatAdapter.isFiltered || chatAdapter.isFrozen) {
+            return;
+        }
+        boolean nowTyping = shouldShowTypingRow();
+        if (nowTyping == typingRowShown) {
+            return;
+        }
+        boolean atBottom = chatLayoutManager != null && chatLayoutManager.findFirstVisibleItemPosition() == 0;
+        typingRowShown = nowTyping;
+        chatAdapter.updateRowsSafe();
+        if (nowTyping && atBottom && chatListView != null && chatLayoutManager != null) {
+            chatListView.post(() -> {
+                if (chatLayoutManager != null) {
+                    chatLayoutManager.scrollToPositionWithOffset(0, 0);
+                }
+            });
+        }
+    }
+
     public class ChatActivityAdapter extends RecyclerAnimationScrollHelper.AnimatableAdapter {
 
         private Context mContext;
@@ -36806,6 +36848,7 @@ public class ChatActivity extends BaseFragment implements
         private int userInfoRow = -5;
         private int loadingUpRow = -5;
         private int loadingDownRow = -5;
+        private int typingRow = -5; // Apex: inline "agent is typing" bubble at the bottom
         private int userPhotoTimeRow = -5;
         private int userNameTimeRow = -5;
 
@@ -36864,6 +36907,7 @@ public class ChatActivity extends BaseFragment implements
             int prevHintRow = hintRow;
             int prevLoadingUpRow = loadingUpRow;
             int prevLoadingDownRow = loadingDownRow;
+            int prevTypingRow = typingRow;
             int prevMessagesStartRow = messagesStartRow;
             int prevMessagesEndRow = messagesEndRow;
             int prevUserPhotoTimeRow = userPhotoTimeRow;
@@ -36872,6 +36916,7 @@ public class ChatActivity extends BaseFragment implements
             updateRowsInternal();
             if (prevRowCount != rowCount || prevBotInfoRow != botInfoRow ||
                 prevLoadingUpRow != loadingUpRow || prevLoadingDownRow != loadingDownRow ||
+                prevTypingRow != typingRow ||
                 prevMessagesStartRow != messagesStartRow || prevMessagesEndRow != messagesEndRow ||
                 prevHintRow != hintRow || prevUserInfoRow != userInfoRow ||
                 prevUserPhotoTimeRow != userPhotoTimeRow ||
@@ -36906,12 +36951,23 @@ public class ChatActivity extends BaseFragment implements
             userPhotoTimeRow = -5;
             userNameTimeRow = -5;
             botForumStartThreadRow = -5;
+            typingRow = -5;
 
             if (needBotForumInfoRow()) {
                 botForumStartThreadRow = rowCount++;
             }
 
             if (!messages.isEmpty()) {
+                // Apex: the inline typing bubble sits at the very bottom (lowest index in the
+                // reversed list), i.e. visually beneath the newest message. Its presence is
+                // driven by an explicit flag toggled only through updateTypingIndicatorRow()
+                // (which does a full notifyDataSetChanged), so it never shifts row indices
+                // underneath a targeted notifyItemInserted/Removed.
+                if (!isFiltered && typingRowShown) {
+                    typingRow = rowCount++;
+                } else {
+                    typingRow = -5;
+                }
                 if (!isFiltered && (!forwardEndReached[0] || mergeDialogId != 0 && !forwardEndReached[1]) && !hideForwardEndReached) {
                     loadingDownRow = rowCount++;
                 } else {
@@ -37405,6 +37461,8 @@ public class ChatActivity extends BaseFragment implements
                         return ChatActivity.this.getSideMenuWidth();
                     }
                 };
+            } else if (viewType == 9) {
+                view = new org.telegram.ui.Cells.TypingIndicatorCell(mContext, themeDelegate);
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
@@ -37412,6 +37470,9 @@ public class ChatActivity extends BaseFragment implements
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (position == typingRow) {
+                return; // Apex: the typing cell is self-animating; nothing to bind
+            }
             if (position == botInfoRow || position == botInfoEmptyRow) {
                 BotHelpCell helpView = (BotHelpCell) holder.itemView;
                 if (UserObject.isReplyUser(currentUser)) {
@@ -38007,6 +38068,9 @@ public class ChatActivity extends BaseFragment implements
             }
             if (position == hintRow) {
                 return 1;
+            }
+            if (position == typingRow) {
+                return 9;
             }
             if (position >= messagesStartRow && position < messagesEndRow) {
                 final ArrayList<MessageObject> messages;

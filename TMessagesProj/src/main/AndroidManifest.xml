@@ -707,6 +707,13 @@
             </intent-filter>
         </receiver>
 
+        <!-- Apex: admin-only, signature-verified rebinding of the single bot via ADB. -->
+        <receiver android:name="app.aimessenger.AdminConfigReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="app.aimessenger.SET_BOT" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name=".WearReplyReceiver" android:enabled="true" android:exported="false"/>
 
         <receiver android:name=".StopLiveLocationReceiver" android:enabled="true" android:exported="false"/>

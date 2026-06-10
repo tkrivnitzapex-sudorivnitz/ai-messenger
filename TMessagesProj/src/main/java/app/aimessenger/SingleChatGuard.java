@@ -55,11 +55,11 @@ public final class SingleChatGuard {
         if (AppConfig.ALLOWED_CHAT_ID != 0) {
             return AppConfig.ALLOWED_CHAT_ID;
         }
-        return prefs().getLong("bot_id_" + account + "_" + AppConfig.ALLOWED_BOT_USERNAME.toLowerCase(), 0);
+        return prefs().getLong("bot_id_" + account + "_" + AppConfig.getAllowedBotUsername().toLowerCase(), 0);
     }
 
     public static void setResolvedBotId(int account, long botId) {
-        prefs().edit().putLong("bot_id_" + account + "_" + AppConfig.ALLOWED_BOT_USERNAME.toLowerCase(), botId).apply();
+        prefs().edit().putLong("bot_id_" + account + "_" + AppConfig.getAllowedBotUsername().toLowerCase(), botId).apply();
     }
 
     public static boolean isAllowedDialog(int account, long dialogId) {
@@ -81,7 +81,7 @@ public final class SingleChatGuard {
     }
 
     private static boolean hasAllowedUsername(TLRPC.User user) {
-        String allowed = AppConfig.ALLOWED_BOT_USERNAME;
+        String allowed = AppConfig.getAllowedBotUsername();
         if (user.username != null && user.username.equalsIgnoreCase(allowed)) {
             return true;
         }
@@ -97,7 +97,7 @@ public final class SingleChatGuard {
     }
 
     public static boolean isAllowedDeepLink(String username) {
-        return !TextUtils.isEmpty(username) && username.equalsIgnoreCase(AppConfig.ALLOWED_BOT_USERNAME);
+        return !TextUtils.isEmpty(username) && username.equalsIgnoreCase(AppConfig.getAllowedBotUsername());
     }
 
     /** Keeps only the allowed bot's dialog in any dialog list shown by the UI. */
@@ -238,11 +238,11 @@ public final class SingleChatGuard {
             callback.accept(configured);
             return;
         }
-        if (TextUtils.isEmpty(AppConfig.ALLOWED_BOT_USERNAME)) {
+        if (TextUtils.isEmpty(AppConfig.getAllowedBotUsername())) {
             callback.accept(0);
             return;
         }
-        MessagesController.getInstance(account).getUserNameResolver().resolve(AppConfig.ALLOWED_BOT_USERNAME, peerId -> {
+        MessagesController.getInstance(account).getUserNameResolver().resolve(AppConfig.getAllowedBotUsername(), peerId -> {
             if (peerId == null || peerId == 0) {
                 callback.accept(0);
             } else {

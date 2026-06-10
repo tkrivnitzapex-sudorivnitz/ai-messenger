@@ -1,5 +1,10 @@
 package app.aimessenger;
 
+import android.content.Context;
+import android.text.TextUtils;
+
+import org.telegram.messenger.ApplicationLoader;
+
 /**
  * Central configuration for the AI Messenger single-bot client.
  * All single-chat restrictions reference this class; do not hardcode
@@ -14,8 +19,41 @@ public final class AppConfig {
 
     public static final boolean FORCE_SINGLE_CHAT_MODE = true;
 
-    // Username of the only bot this client is allowed to talk to. No leading @.
+    // Compiled-in default bot username (no leading @). Used until an admin
+    // overrides it at runtime via a signed ADB broadcast (see AdminConfigReceiver).
+    // Always read the effective value through getAllowedBotUsername().
     public static final String ALLOWED_BOT_USERNAME = "whateslewillitbe_bot";
+
+    // --- Runtime admin override (signed ADB broadcast) ---------------------
+    // SharedPreferences file holding the admin-set bot + replay nonce.
+    public static final String ADMIN_PREFS = "apex_admin";
+    public static final String KEY_ADMIN_BOT = "allowed_bot";
+    public static final String KEY_ADMIN_NONCE = "bot_nonce";
+
+    // RSA-2048 public key (X.509 SubjectPublicKeyInfo, Base64). The matching
+    // PRIVATE key is held only by the admin and is NOT in this repo; it is used
+    // to sign "<username>|<nonce>" so only the admin can change the bound bot.
+    public static final String ADMIN_PUBLIC_KEY_B64 =
+        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArLtLXiiaLIvrw3dP6292oHiVqs05+/4FyqmONCwbLB1AC6mp33wkzUkVQSNNR6xvSqdwDQVc5heCcrh17aoyawkbEhytyilwNTGspHgs5wxGhfSKRXOYpcg6rfFtNpYVSr9L35TNP0PZwlWdAUPj4hDEL/bHIhwZsWmiK3UVtIl+P/Zsq5L34UE/+Aqo+Fr5yjeIfUDoF8MisEUuUCny7q7jiDAmWH/4BCpvMs6pOt6ytkorj1cWSjn6lKCeKV4DojtNna0tVdRmajvNdQt8ZayPcTMPa2O7LhXhw4GIAyGQVbR16LMScS1WhNZy9T/LFf31wyqxu0QSad+zXRKshwIDAQAB";
+
+    /**
+     * The effective allowed-bot username: the admin-set value if present and
+     * valid, otherwise the compiled-in default. Never returns null/empty.
+     */
+    public static String getAllowedBotUsername() {
+        try {
+            Context ctx = ApplicationLoader.applicationContext;
+            if (ctx != null) {
+                String v = ctx.getSharedPreferences(ADMIN_PREFS, Context.MODE_PRIVATE)
+                        .getString(KEY_ADMIN_BOT, null);
+                if (!TextUtils.isEmpty(v)) {
+                    return v;
+                }
+            }
+        } catch (Throwable ignore) {
+        }
+        return ALLOWED_BOT_USERNAME;
+    }
 
     // Optional fallback. Positive user id of the bot. Use 0 to resolve by username.
     public static final long ALLOWED_CHAT_ID = 0L;

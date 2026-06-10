@@ -629,6 +629,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     private LinearLayout attachLayout;
     private ViewPropertyAnimator attachButtonAnimator;
     private ImageView attachButton;
+    private ImageView plusButton; // Apex: Claude-style "+" upload button on the far left
     private AiButtonDrawable aiButtonIcon;
     private ImageView aiButton;
     private float attachButtonAlpha = 1.0f;
@@ -2847,6 +2848,27 @@ public class ChatActivityEnterView extends FrameLayout implements
             });
             attachButton.setContentDescription(getString(R.string.AccDescrAttachButton));
             updateFieldRight(1);
+
+            // Apex (Claude-style input bar): a "+" upload button pinned to the far left.
+            // It opens the same attachment sheet as the old paperclip, which is now hidden.
+            plusButton = new ImageView(context);
+            plusButton.setScaleType(ImageView.ScaleType.CENTER);
+            plusButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
+            plusButton.setImageResource(R.drawable.msg_add);
+            plusButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(18)));
+            messageEditTextContainer.addView(plusButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 2, 0, 0, 0));
+            plusButton.setOnClickListener(v -> {
+                if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress()) {
+                    return;
+                }
+                if (delegate != null) {
+                    delegate.didPressAttachButton();
+                }
+            });
+            plusButton.setContentDescription(getString(R.string.AccDescrAttachButton));
+            ScaleStateListAnimator.apply(plusButton);
+            // The legacy right-side paperclip is replaced by the "+" button.
+            attachButton.setVisibility(GONE);
         }
 
         aiButton = new ImageView(context);
@@ -5917,7 +5939,8 @@ public class ChatActivityEnterView extends FrameLayout implements
 
     private boolean shownAiButton;
     private void showAiButton(boolean show_) {
-        final boolean show = show_ && parentFragment != null && !parentFragment.isSecretChat();
+        // AI suite removed (Apex): the AI editor button never appears.
+        final boolean show = false;
 
         if (shownAiButton == show) return;
         if (show) {
@@ -13891,23 +13914,28 @@ public class ChatActivityEnterView extends FrameLayout implements
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int wasHeight = textFieldContainer.getMeasuredHeight();
+        // Apex: reserve the far-left slot for the "+" upload button, then seat the
+        // commands ("/") button and the text field to its right.
+        final int plusW = plusButton != null ? dp(DEFAULT_HEIGHT) : 0;
         if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() != null) {
             botCommandsMenuButton.measure(widthMeasureSpec, heightMeasureSpec);
-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(10) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
+            final int bcw = botCommandsMenuButton.getMeasuredWidth();
+            ((MarginLayoutParams) botCommandsMenuButton.getLayoutParams()).leftMargin = plusW + dp(2);
+            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = plusW + dp(10) + bcw;
             if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(12) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
+                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = plusW + dp(12) + bcw;
             }
         } else if (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE) {
             int width = senderSelectView.getLayoutParams().width, height = senderSelectView.getLayoutParams().height;
             senderSelectView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(16) + width;
+            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = plusW + dp(16) + width;
             if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(16) + width;
+                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = plusW + dp(16) + width;
             }
         } else {
-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(3);
+            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = plusW + dp(3);
             if (messageEditText != null) {
-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(14);
+                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = plusW + dp(14);
             }
         }
         updateBotCommandsMenuContainerTopPadding();
@@ -14962,7 +14990,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     public void setLiveComment(boolean isLiveComment, boolean isAdmin) {
         if (this.isLiveComment == isLiveComment) return;
         this.isLiveComment = isLiveComment;
-        attachButton.setVisibility(isLiveComment ? View.GONE : View.VISIBLE);
+        attachButton.setVisibility(View.GONE); // Apex: paperclip replaced by the "+" button
         if (isLiveComment) {
             AndroidUtilities.removeFromParent(notifyButton);
         }

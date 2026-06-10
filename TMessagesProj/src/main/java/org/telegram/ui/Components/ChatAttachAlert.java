@@ -6129,7 +6129,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     private boolean shownAiButton;
     private void showAiButton(boolean show_) {
-        final boolean show = show_ && (baseFragment instanceof ChatActivity && !((ChatActivity) baseFragment).isSecretChat());
+        // AI suite removed (Apex): the AI editor button never appears.
+        final boolean show = false;
 
         if (shownAiButton == show) return;
         if (show) {

@@ -18564,6 +18564,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     }
 
     protected boolean checkNeedDrawShareButton(MessageObject messageObject) {
+        // Apex single-chat mode: never show the in-bubble share/forward button on media.
+        // It opens the all-chats forward picker, which contradicts the single-bot model.
+        if (app.aimessenger.AppConfig.isSingleChatModeEnabled()) return false;
         if (isReportChat) return false;
         if (currentMessageObject.deleted && !currentMessageObject.deletedByThanos) return false;
         if (currentMessageObject.isSponsored()) return false;
