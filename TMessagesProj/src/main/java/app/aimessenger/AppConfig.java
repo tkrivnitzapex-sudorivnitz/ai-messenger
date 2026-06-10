@@ -23,7 +23,6 @@ public final class AppConfig {
     // Send "/start" automatically the first time the bot chat is opened.
     public static final boolean AUTO_SEND_START_IF_NEW = true;
 
-
     // Remove every way to react to messages: the emoji strip above the
     // long-press menu and the double-tap quick-reaction gesture.
     public static final boolean DISABLE_REACTIONS = true;
@@ -37,6 +36,9 @@ public final class AppConfig {
 
     // Keep the bot-commands "Menu" pill permanently collapsed to icon-only.
     public static final boolean BOT_MENU_ICON_ONLY = true;
+
+    // Draw all message bubbles as uniform rounded cards with no tail.
+    public static final boolean UNIFORM_BUBBLES = true;
 
     private AppConfig() {
     }
