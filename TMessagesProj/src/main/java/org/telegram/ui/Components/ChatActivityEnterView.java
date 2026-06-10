@@ -14862,7 +14862,16 @@ public class ChatActivityEnterView extends FrameLayout implements
 
     private ChatActivitySideControlsButtonsLayout sideButtons;
     public void setSideButtonsForAttach(ChatActivitySideControlsButtonsLayout sideButtons) {
-        this.sideButtons = sideButtons;
+        // Apex fork: do NOT relocate the attach (paperclip) button into the floating
+        // side-controls rail when the user starts typing. The stock Telegram design
+        // moves BUTTON_ATTACH up/right into the side rail (toward the action bar's
+        // three-dot button), which reads as the paperclip "jumping" out of the input
+        // bar. Keeping this field null makes every `if (sideButtons != null)` branch in
+        // checkSendButton() fall through to its else-clause, which simply fades/shrinks
+        // the inline attachButton in place (alpha 0 / scale 0.5) as the send button
+        // appears. The side rail itself (page-down, mentions, etc.) is still managed
+        // directly by ChatActivity, so this only suppresses the attach relocation.
+        this.sideButtons = null;
     }
 
     public boolean isInTopViewVisibilityAnimating() {
