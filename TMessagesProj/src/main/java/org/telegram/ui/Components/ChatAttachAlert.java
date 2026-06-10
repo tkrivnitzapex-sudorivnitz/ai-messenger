@@ -6358,32 +6358,19 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_EMOJI)) {
                     emojiButton = buttonsCount++;
                 }
-                if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_MUSIC)) {
-                    musicButton = buttonsCount++;
-                }
-                if (pollAllowedLayouts == 0 || BitwiseUtils.hasFlag(pollAllowedLayouts, 1 << LAYOUT_TYPE_LOCATION)) {
-                    locationButton = buttonsCount++;
-                }
             } else if (!(baseFragment instanceof ChatActivity)) {
                 galleryButton = buttonsCount++;
                 documentButton = buttonsCount++;
-                if (allowEnterCaption) {
-                    musicButton = buttonsCount++;
-                }
             } else if (editingMessageObject != null) {
                 if (editType == EDITMEDIA_TYPE_ANY) {
                     galleryButton = buttonsCount++;
                     documentButton = buttonsCount++;
-                    musicButton = buttonsCount++;
                 } else {
                     if (editType == EDITMEDIA_TYPE_PHOTOVIDEO) {
                         galleryButton = buttonsCount++;
                     }
                     if (editType == EDITMEDIA_TYPE_FILE) {
                         documentButton = buttonsCount++;
-                    }
-                    if (editType == EDITMEDIA_TYPE_MUSIC) {
-                        musicButton = buttonsCount++;
                     }
                 }
             } else {
@@ -6408,24 +6395,6 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     }
                 }
                 documentButton = buttonsCount++;
-
-                if (plainTextEnabled) {
-                    locationButton = buttonsCount++;
-                }
-
-                if (pollsEnabled) {
-                    pollButton = buttonsCount++;
-                }
-                if (todoEnabled) {
-                    todoButton = buttonsCount++;
-                }
-                if (plainTextEnabled) {
-                    contactButton = buttonsCount++;
-                }
-                if (baseFragment instanceof ChatActivity && ((ChatActivity) baseFragment).getChatMode() == 0 && user != null && !paidUser && !user.bot && QuickRepliesController.getInstance(currentAccount).hasReplies()) {
-                    quickRepliesButton = buttonsCount++;
-                }
-                musicButton = buttonsCount++;
             }
             super.notifyDataSetChanged();
         }
