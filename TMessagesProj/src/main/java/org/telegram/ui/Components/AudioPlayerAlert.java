@@ -1299,6 +1299,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 .show();
         });
         playerLayout.addView(unsaveFromProfileButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.FILL_HORIZONTAL | Gravity.BOTTOM, 12, 12, 12, 12));
+        if (AppConfig.MINIMAL_AUDIO_PLAYER) {
+            unsaveFromProfileButton.setVisibility(View.GONE);
+        }
 
         savedMusicList = MediaController.getInstance().currentSavedMusicList;
         isProfilePlaylist = savedMusicList != null;
@@ -2994,7 +2997,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
     }
 
     private void setVisibleInProfile(boolean visible) {
-        if (isMyList() || noforwards) {
+        if (AppConfig.MINIMAL_AUDIO_PLAYER || isMyList() || noforwards) {
             saveToProfileButton.setVisibility(View.GONE);
             unsaveFromProfileButton.setVisibility(View.GONE);
             return;

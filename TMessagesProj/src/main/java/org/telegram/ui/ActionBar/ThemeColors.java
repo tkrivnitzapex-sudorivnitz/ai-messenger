@@ -48,7 +48,8 @@ public class ThemeColors {
         defaultColors[key_dialogLineProgress] = TELEGRAM_COLOR;
         defaultColors[key_dialogLineProgressBackground] = 0xffdbdbdb;
         defaultColors[key_dialogButton] = TELEGRAM_COLOR_TEXT;
-        defaultColors[key_dialogButtonSelector] = 0xFFF3F4F6;
+        // Translucent so pressed/ripple states overlay content; reads as ~#F3F4F6 over white.
+        defaultColors[key_dialogButtonSelector] = 0x0c000000;
         defaultColors[key_dialogScrollGlow] = 0xfff5f6f7;
         defaultColors[key_dialogRoundCheckBox] = TELEGRAM_COLOR;
         defaultColors[key_dialogRoundCheckBoxCheck] = 0xffffffff;
