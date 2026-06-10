@@ -31,6 +31,9 @@ public final class AppConfig {
     // entries and the multi-select action-mode button.
     public static final boolean HIDE_FORWARD = true;
 
+    // Audio player sheet: hide "+ Add to Profile" and the three-dot options menu.
+    public static final boolean MINIMAL_AUDIO_PLAYER = true;
+
     private AppConfig() {
     }
 
