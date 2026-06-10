@@ -101,6 +101,7 @@ import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.Vector;
 import org.telegram.tgnet.tl.TL_account;
+import app.aimessenger.AppConfig;
 import org.telegram.ui.BlurSettingsBottomSheet;
 import org.telegram.ui.Cells.BaseCell;
 import org.telegram.ui.ChatActivity;
@@ -730,13 +731,13 @@ public class Theme {
                 nearRad = overrideRoundRadius;
             } else if (overrideRounding > 0) {
                 rad = AndroidUtilities.lerp(dp(SharedConfig.bubbleRadius), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
-                nearRad = AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
+                nearRad = AppConfig.UNIFORM_BUBBLES ? rad : AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
             } else if (currentType == TYPE_PREVIEW) {
                 rad = dp(6);
                 nearRad = dp(6);
             } else {
                 rad = dp(SharedConfig.bubbleRadius);
-                nearRad = dp(Math.min(6, SharedConfig.bubbleRadius));
+                nearRad = AppConfig.UNIFORM_BUBBLES ? rad : dp(Math.min(6, SharedConfig.bubbleRadius));
             }
             int smallRad = dp(6);
 
@@ -793,13 +794,13 @@ public class Theme {
                 nearRad = overrideRoundRadius;
             } else if (overrideRounding > 0) {
                 rad = AndroidUtilities.lerp(dp(SharedConfig.bubbleRadius), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
-                nearRad = AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
+                nearRad = AppConfig.UNIFORM_BUBBLES ? rad : AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
             } else if (currentType == TYPE_PREVIEW) {
                 rad = dp(6);
                 nearRad = dp(6);
             } else {
                 rad = dp(SharedConfig.bubbleRadius);
-                nearRad = dp(Math.min(6, SharedConfig.bubbleRadius));
+                nearRad = AppConfig.UNIFORM_BUBBLES ? rad : dp(Math.min(6, SharedConfig.bubbleRadius));
             }
             int smallRad = dp(6);
             int top = Math.max(bounds.top, 0);
@@ -839,7 +840,7 @@ public class Theme {
                     if (currentType == TYPE_MEDIA) {
                         path.moveTo(bounds.right - dp(8) - radToUse, bounds.bottom - padding);
                     } else {
-                        path.moveTo(bounds.right - dp(2.6f), bounds.bottom - padding);
+                        path.moveTo(AppConfig.UNIFORM_BUBBLES ? bounds.right - dp(8) - radToUse : bounds.right - dp(2.6f), bounds.bottom - padding);
                     }
                     path.lineTo(bounds.left + padding + radToUse, bounds.bottom - padding);
                     rect.set(bounds.left + padding, bounds.bottom - padding - radToUse * 2, bounds.left + padding + radToUse * 2, bounds.bottom - padding);
@@ -888,9 +889,16 @@ public class Theme {
                     }
                 } else {
                     if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
-                        path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
-                        rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
-                        path.arcTo(rect, 180, -83, false);
+                        if (AppConfig.UNIFORM_BUBBLES) {
+                            int radToUse = isBottomNear ? nearRad : rad;
+                            path.lineTo(bounds.right - dp(8), bounds.bottom - padding - radToUse);
+                            rect.set(bounds.right - dp(8) - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - dp(8), bounds.bottom - padding);
+                            path.arcTo(rect, 0, 90, false);
+                        } else {
+                            path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
+                            rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
+                            path.arcTo(rect, 180, -83, false);
+                        }
                     } else {
                         path.lineTo(bounds.right - dp(8), top - topY + currentBackgroundHeight);
                     }
@@ -902,7 +910,7 @@ public class Theme {
                     if (currentType == TYPE_MEDIA) {
                         path.moveTo(bounds.left + dp(8) + radToUse, bounds.bottom - padding);
                     } else {
-                        path.moveTo(bounds.left + dp(2.6f), bounds.bottom - padding);
+                        path.moveTo(AppConfig.UNIFORM_BUBBLES ? bounds.left + dp(8) + radToUse : bounds.left + dp(2.6f), bounds.bottom - padding);
                     }
                     path.lineTo(bounds.right - padding - radToUse, bounds.bottom - padding);
                     rect.set(bounds.right - padding - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - padding, bounds.bottom - padding);
@@ -945,9 +953,16 @@ public class Theme {
                     }
                 } else {
                     if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
-                        path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
-                        rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
-                        path.arcTo(rect, 0, 83, false);
+                        if (AppConfig.UNIFORM_BUBBLES) {
+                            int radToUse = isBottomNear ? nearRad : rad;
+                            path.lineTo(bounds.left + dp(8), bounds.bottom - padding - radToUse);
+                            rect.set(bounds.left + dp(8), bounds.bottom - padding - radToUse * 2, bounds.left + dp(8) + radToUse * 2, bounds.bottom - padding);
+                            path.arcTo(rect, 180, -90, false);
+                        } else {
+                            path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
+                            rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
+                            path.arcTo(rect, 0, 83, false);
+                        }
                     } else {
                         path.lineTo(bounds.left + dp(8), top - topY + currentBackgroundHeight);
                     }

@@ -23,6 +23,9 @@ public final class AppConfig {
     // Send "/start" automatically the first time the bot chat is opened.
     public static final boolean AUTO_SEND_START_IF_NEW = true;
 
+    // Draw all message bubbles as uniform rounded cards with no tail.
+    public static final boolean UNIFORM_BUBBLES = true;
+
     private AppConfig() {
     }
 
