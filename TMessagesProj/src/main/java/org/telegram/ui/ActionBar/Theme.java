@@ -8651,11 +8651,16 @@ public class Theme {
         synchronized (sync) {
             if (chat_msgTextPaint == null) {
                 chat_msgTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgTextPaint.setTypeface(AndroidUtilities.regular());
                 chat_msgGameTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgGameTextPaint.setTypeface(AndroidUtilities.regular());
                 chat_msgTextPaintEmoji = new TextPaint[6];
                 chat_msgTextPaintOneEmoji = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgTextPaintOneEmoji.setTypeface(AndroidUtilities.regular());
                 chat_msgTextPaintTwoEmoji = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgTextPaintTwoEmoji.setTypeface(AndroidUtilities.regular());
                 chat_msgTextPaintThreeEmoji = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgTextPaintThreeEmoji.setTypeface(AndroidUtilities.regular());
                 chat_msgBotButtonPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                 chat_msgBotButtonPaint.setTypeface(AndroidUtilities.bold());
                 chat_namePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
@@ -8683,6 +8688,7 @@ public class Theme {
             final float[] emojiSizePercents = new float[] {.68f, .46f, .34f, .28f, .22f, .19f};
             for (int i = 0; i < chat_msgTextPaintEmoji.length; ++i) {
                 chat_msgTextPaintEmoji[i] = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+                chat_msgTextPaintEmoji[i].setTypeface(AndroidUtilities.regular());
                 chat_msgTextPaintEmoji[i].setTextSize(dp(emojiSizePercents[i] * 120f));
             }
             chat_msgTextPaintOneEmoji.setTextSize(dp(28 + 18));

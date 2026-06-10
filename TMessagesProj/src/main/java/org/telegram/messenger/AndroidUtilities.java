@@ -258,6 +258,11 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_MEDIUM_ITALIC = "fonts/rmediumitalic.ttf";
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
     public final static String TYPEFACE_MERRIWEATHER_BOLD = "fonts/mw_bold.ttf";
+    public final static String TYPEFACE_INTER_REGULAR = "fonts/Inter-Regular.ttf";
+
+    public static Typeface regular() {
+        return getTypeface(TYPEFACE_INTER_REGULAR);
+    }
 
     public static Typeface mediumTypeface;
     public static ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
@@ -265,11 +270,7 @@ public class AndroidUtilities {
 
     public static Typeface bold() {
         if (mediumTypeface == null) {
-            if (SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                mediumTypeface = Typeface.create(null, 500, false);
-            } else {
-                mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
-            }
+            mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
         }
         return mediumTypeface;
     }
@@ -2409,34 +2410,22 @@ public class AndroidUtilities {
                     Typeface t;
                     switch (assetPath) {
                         case TYPEFACE_ROBOTO_MEDIUM:
-                            if (TypefaceHelper.isMediumWeightSupported()) {
-                                t = TypefaceHelper.createTypeface(500, false);
-                            } else {
-                                t = Typeface.create("sans-serif", Typeface.BOLD);
-                            }
+                            t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/Inter-SemiBold.ttf");
                             break;
                         case "fonts/ritalic.ttf":
-                            t = TypefaceHelper.createTypeface(400, true);
+                            t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/Inter-Italic.ttf");
                             break;
                         case TYPEFACE_ROBOTO_MEDIUM_ITALIC:
-                            if (TypefaceHelper.isMediumWeightSupported()) {
-                                t = TypefaceHelper.createTypeface(500, true);
-                            } else {
-                                t = Typeface.create("sans-serif", Typeface.BOLD_ITALIC);
-                            }
+                            t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/Inter-SemiBoldItalic.ttf");
                             break;
                         case TYPEFACE_ROBOTO_MONO:
                             t = Typeface.MONOSPACE;
                             break;
                         case "fonts/rcondensedbold.ttf":
-                            t = Typeface.create("sans-serif-condensed", Typeface.BOLD);
+                            t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/Inter-Bold.ttf");
                             break;
                         case TYPEFACE_ROBOTO_EXTRA_BOLD:
-                            if (TypefaceHelper.isMediumWeightSupported()) {
-                                t = TypefaceHelper.createTypeface(800, false);
-                            } else {
-                                t = Typeface.create("sans-serif", Typeface.BOLD);
-                            }
+                            t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/Inter-ExtraBold.ttf");
                             break;
                         default:
                             if (Build.VERSION.SDK_INT >= 26) {
