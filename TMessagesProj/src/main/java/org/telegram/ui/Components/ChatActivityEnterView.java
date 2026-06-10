@@ -2717,12 +2717,6 @@ public class ChatActivityEnterView extends FrameLayout implements
         };
         frameLayout.setClipChildren(false);
         textFieldContainer.addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 0, 0, DEFAULT_HEIGHT, 0));
-        // Apex: lift the composer into a subtly raised, rounded card so it pops from the chat.
-        android.graphics.drawable.GradientDrawable composerCard = new android.graphics.drawable.GradientDrawable();
-        composerCard.setColor(getThemedColor(Theme.key_chat_messagePanelBackground));
-        composerCard.setCornerRadius(dp(20));
-        frameLayout.setBackground(composerCard);
-        frameLayout.setElevation(dp(3));
 
         emojiButton = new ChatActivityEnterViewAnimatedIconView(context) {
             /*@Override
