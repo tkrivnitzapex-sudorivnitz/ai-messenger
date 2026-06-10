@@ -16,6 +16,9 @@ import static org.telegram.messenger.LocaleController.getString;
 import static org.telegram.ui.LaunchActivity.getLastFragment;
 
 import android.Manifest;
+
+import app.aimessenger.AppConfig;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -4438,7 +4441,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         });
         messageEditTextContainer.addView(botCommandsMenuButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, Gravity.BOTTOM | Gravity.LEFT, 8, 6, 8, 6));
         AndroidUtilities.updateViewVisibilityAnimated(botCommandsMenuButton, false, 1f, false);
-        botCommandsMenuButton.setExpanded(true, false);
+        botCommandsMenuButton.setExpanded(!AppConfig.BOT_MENU_ICON_ONLY, false);
     }
 
     private void createBotWebViewButton() {
@@ -4583,7 +4586,7 @@ public class ChatActivityEnterView extends FrameLayout implements
     }
 
     private void checkBotMenu() {
-        final boolean shouldBeExpanded = (messageEditText == null || TextUtils.isEmpty(messageEditText.getText())) && !(keyboardVisible || waitingForKeyboardOpen || isPopupShowing());
+        final boolean shouldBeExpanded = !AppConfig.BOT_MENU_ICON_ONLY && (messageEditText == null || TextUtils.isEmpty(messageEditText.getText())) && !(keyboardVisible || waitingForKeyboardOpen || isPopupShowing());
         if (shouldBeExpanded) {
             createBotCommandsMenuButton();
         }

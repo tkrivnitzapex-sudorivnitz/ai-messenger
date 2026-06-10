@@ -23,6 +23,9 @@ public final class AppConfig {
     // Send "/start" automatically the first time the bot chat is opened.
     public static final boolean AUTO_SEND_START_IF_NEW = true;
 
+    // Keep the bot-commands "Menu" pill permanently collapsed to icon-only.
+    public static final boolean BOT_MENU_ICON_ONLY = true;
+
     private AppConfig() {
     }
 
