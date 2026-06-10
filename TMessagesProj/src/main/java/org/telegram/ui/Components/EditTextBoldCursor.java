@@ -121,6 +121,13 @@ public class EditTextBoldCursor extends EditTextEffects {
     private StaticLayout hintLayout;
     public float hintLayoutX, hintLayoutY;
     public boolean hintLayoutYFix;
+    private boolean hintTopAligned; // Apex: top-align the hint for the multi-line composer
+
+    public void setHintTopAligned(boolean value) {
+        hintTopAligned = value;
+        requestLayout();
+        invalidate();
+    }
     public boolean lineYFix;
     public Utilities.Callback2<Canvas, Runnable> drawHint;
     private AnimatedTextView.AnimatedTextDrawable hintAnimatedDrawable;
@@ -663,7 +670,11 @@ public class EditTextBoldCursor extends EditTextEffects {
             if (lastSize != currentSize) {
                 setHintText(hint, false, hintLayout.getPaint());
             }
-            if (hintLayoutYFix) {
+            if (hintTopAligned) {
+                // Apex: top-align the placeholder so it lines up with the top-left caret in a
+                // multi-line composer (instead of being vertically centered / sitting low).
+                lineY = getPaddingTop() + hintLayout.getHeight() + AndroidUtilities.dp2(7);
+            } else if (hintLayoutYFix) {
                 lineY = getExtendedPaddingTop() + getPaddingTop() + (getMeasuredHeight() - getPaddingTop() - getPaddingBottom() - hintLayout.getHeight()) / 2.0f + hintLayout.getHeight() - dp(1);
             } else {
                 lineY = (getMeasuredHeight() - hintLayout.getHeight()) / 2.0f + hintLayout.getHeight() + dp(6);

@@ -2717,6 +2717,12 @@ public class ChatActivityEnterView extends FrameLayout implements
         };
         frameLayout.setClipChildren(false);
         textFieldContainer.addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM, 0, 0, DEFAULT_HEIGHT, 0));
+        // Apex: lift the composer into a subtly raised, rounded card so it pops from the chat.
+        android.graphics.drawable.GradientDrawable composerCard = new android.graphics.drawable.GradientDrawable();
+        composerCard.setColor(getThemedColor(Theme.key_chat_messagePanelBackground));
+        composerCard.setCornerRadius(dp(20));
+        frameLayout.setBackground(composerCard);
+        frameLayout.setElevation(dp(3));
 
         emojiButton = new ChatActivityEnterViewAnimatedIconView(context) {
             /*@Override
@@ -5686,10 +5692,11 @@ public class ChatActivityEnterView extends FrameLayout implements
         // Apex: a real composer — 4 typeable lines, cursor starting at the TOP-LEFT so the
         // whole box reads as a waiting input area. The +/"/" buttons live in a row below
         // (reserved via the edit text's bottom margin in createFrame/onMeasure).
-        messageEditText.setMinLines(4);
-        messageEditText.setMaxLines(8);
+        messageEditText.setMinLines(3);
+        messageEditText.setMaxLines(7);
         messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         messageEditText.setGravity(Gravity.TOP | Gravity.LEFT);
+        messageEditText.setHintTopAligned(true); // Apex: align the placeholder with the top-left caret
         messageEditText.setPadding(0, dp(9), 0, dp(10));
         messageEditText.setBackgroundDrawable(null);
         messageEditText.setTextColor(getThemedColor(Theme.key_chat_messagePanelText));
@@ -9544,7 +9551,9 @@ public class ChatActivityEnterView extends FrameLayout implements
         };
         recordPanel.setClipChildren(false);
         recordPanel.setVisibility(GONE);
-        messageEditTextContainer.addView(recordPanel, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DEFAULT_HEIGHT));
+        // Apex: anchor the recording UI (timer + slide-to-cancel) to the bottom row so it
+        // lines up with the buttons in the multi-line composer instead of the top line.
+        messageEditTextContainer.addView(recordPanel, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DEFAULT_HEIGHT, Gravity.BOTTOM));
         recordPanel.setOnTouchListener((v, event) -> true);
         recordPanel.addView(slideText = new SlideTextView(getContext()), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.NO_GRAVITY, 45, 0, 0, 0));
 
