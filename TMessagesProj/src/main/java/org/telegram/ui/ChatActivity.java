@@ -1965,6 +1965,9 @@ public class ChatActivity extends BaseFragment implements
                 return;
             }
             if (doubleTapAction == NekoConfig.DOUBLE_TAP_ACTION_REACTION) {
+                if (app.aimessenger.AppConfig.DISABLE_REACTIONS) {
+                    return;
+                }
                 if (message.isSecretMedia() || !message.canSetReaction() || message.isExpiredStory() || message.type == MessageObject.TYPE_JOINED_CHANNEL) {
                     return;
                 }
@@ -10338,7 +10341,7 @@ public class ChatActivity extends BaseFragment implements
             }
             actionModeViews.add(actionMode.addItemWithWidth(star, R.drawable.msg_fave, AndroidUtilities.dp(54), LocaleController.getString(R.string.AddToFavorites)));
             actionModeViews.add(actionMode.addItemWithWidth(copy, R.drawable.msg_copy, AndroidUtilities.dp(54), LocaleController.getString(R.string.Copy)));
-            if (!isSavedMessages && getDialogId() != UserObject.VERIFY) {
+            if (!app.aimessenger.AppConfig.HIDE_FORWARD && !isSavedMessages && getDialogId() != UserObject.VERIFY) {
                 actionModeViews.add(actionMode.addItemWithWidth(forward, R.drawable.msg_forward, AndroidUtilities.dp(54), LocaleController.getString(R.string.Forward)));
                 if (NekoConfig.showNoQuoteForward) actionModeViews.add(actionMode.addItemWithWidth(ForwardItem.ID_FORWARD_NOQUOTE, R.drawable.msg_forward, AndroidUtilities.dp(54), LocaleController.getString(R.string.NoQuoteForward)));
             }
@@ -30860,7 +30863,7 @@ public class ChatActivity extends BaseFragment implements
             Rect rect = new Rect();
 
             List<TLRPC.TL_availableReaction> availableReacts = getMediaDataController().getEnabledReactionsList();
-            final boolean isReactionsViewAvailable = !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
+            final boolean isReactionsViewAvailable = !app.aimessenger.AppConfig.DISABLE_REACTIONS && !suggestEdit && !isSecretChat() && !isInScheduleMode() && currentUser == null && primaryMessage.hasReactions() && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && !ChatObject.isMonoForum(currentChat) && !availableReacts.isEmpty() && primaryMessage.messageOwner.reactions.can_see_list && !primaryMessage.isSecretMedia();
             final boolean isReactionsAvailable;
             if (suggestEdit) {
                 isReactionsAvailable = false;
@@ -30880,7 +30883,7 @@ public class ChatActivity extends BaseFragment implements
                         );
                 }
             } else {
-                isReactionsAvailable = !isSecretChat()
+                isReactionsAvailable = !app.aimessenger.AppConfig.DISABLE_REACTIONS && !isSecretChat()
                     && chatMode != MODE_QUICK_REPLIES
                     && !isInScheduleMode()
                     && primaryMessage.isReactionsAvailable()
@@ -46113,14 +46116,16 @@ public class ChatActivity extends BaseFragment implements
                     !selectedObject.isLiveLocation() && selectedObject.type != MessageObject.TYPE_PHONE_CALL && !noforwards && selectedObject.type != MessageObject.TYPE_SHARING_OFFER &&
                     selectedObject.type != MessageObject.TYPE_GIFT_PREMIUM && selectedObject.type != MessageObject.TYPE_GIFT_OFFER && selectedObject.type != MessageObject.TYPE_GIFT_OFFER_REJECTED && selectedObject.type != MessageObject.TYPE_GIFT_PREMIUM_CHANNEL && selectedObject.type != MessageObject.TYPE_SUGGEST_PHOTO && !selectedObject.isWallpaperAction()
                     && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION && message.type != MessageObject.TYPE_GIFT_STARS) {
-                    var hasCaption = ForwardItem.hasCaption(selectedObject, selectedObjectGroup);
-                    items.add(ForwardItem.getLastForwardOptionTitle(hasCaption, true));
-                    options.add(ForwardItem.getLastForwardOption(hasCaption));
-                    icons.add(R.drawable.msg_forward);
-                    if (NekoConfig.showNoQuoteForward) {
-                        items.add(LocaleController.getString(R.string.NoQuoteForwardShort));
-                        options.add(OPTION_FORWARD_NOQUOTE);
+                    if (!app.aimessenger.AppConfig.HIDE_FORWARD) {
+                        var hasCaption = ForwardItem.hasCaption(selectedObject, selectedObjectGroup);
+                        items.add(ForwardItem.getLastForwardOptionTitle(hasCaption, true));
+                        options.add(ForwardItem.getLastForwardOption(hasCaption));
                         icons.add(R.drawable.msg_forward);
+                        if (NekoConfig.showNoQuoteForward) {
+                            items.add(LocaleController.getString(R.string.NoQuoteForwardShort));
+                            options.add(OPTION_FORWARD_NOQUOTE);
+                            icons.add(R.drawable.msg_forward);
+                        }
                     }
                     if (NekoConfig.showSetReminder) {
                         items.add(LocaleController.getString(R.string.SetReminder));
