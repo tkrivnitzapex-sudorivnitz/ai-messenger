@@ -67,6 +67,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import app.aimessenger.AppConfig;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.gms.cast.framework.CastContext;
 
@@ -340,7 +342,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 layoutParams = (LayoutParams) blurredView.getLayoutParams();
                 layoutParams.topMargin = -getPaddingTop();
 
-                int contentSize = dp(179 + (!isMyList() && !noforwards ? 52 : 0));
+                int contentSize = dp(179 + (!isMyList() && !noforwards ? (AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52) : 0));
                 if (playlist.size() > 1) {
                     contentSize += backgroundPaddingTop + playlist.size() * dp(56);
                 }
@@ -349,8 +351,8 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                     padding = dp(8);
                 } else {
                     padding = (contentSize < availableHeight ? availableHeight - contentSize : availableHeight - (int) (availableHeight / 5 * 3.5f)) + dp(8);
-                    if (padding > availableHeight - dp(179 + (!isMyList() && !noforwards ? 52 : 0) + 150)) {
-                        padding = availableHeight - dp(179 + (!isMyList() && !noforwards ? 52 : 0) + 150);
+                    if (padding > availableHeight - dp(179 + (!isMyList() && !noforwards ? (AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52) : 0) + 150)) {
+                        padding = availableHeight - dp(179 + (!isMyList() && !noforwards ? (AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52) : 0) + 150);
                     }
                     if (padding < 0) {
                         padding = 0;
@@ -384,7 +386,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                     if (listAdapter.getItemCount() > 0) {
                         dismiss = ev.getY() < scrollOffsetY + dp(12);
                     } else {
-                        dismiss = ev.getY() < getMeasuredHeight() - dp(179 + (!isMyList() && !noforwards ? 52 : 0) + 12);
+                        dismiss = ev.getY() < getMeasuredHeight() - dp(179 + (!isMyList() && !noforwards ? (AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52) : 0) + 12);
                     }
                     if (dismiss) {
                         dismiss();
@@ -1129,6 +1131,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
         optionsButton.setOnClickListener(v -> optionsButton.toggleSubMenu());
         optionsButton.setDelegate(this::onSubItemClick);
         optionsButton.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
+        if (AppConfig.MINIMAL_AUDIO_PLAYER) {
+            optionsButton.setVisibility(View.GONE);
+        }
 
         emptyView = new LinearLayout(context);
         emptyView.setOrientation(LinearLayout.VERTICAL);
@@ -1276,6 +1281,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 .show();
         });
         playerLayout.addView(saveToProfileButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 42, Gravity.FILL_HORIZONTAL | Gravity.BOTTOM, 12, 12, 12, 12));
+        if (AppConfig.MINIMAL_AUDIO_PLAYER) {
+            saveToProfileButton.setVisibility(View.GONE);
+        }
 
         unsaveFromProfileButton = new ButtonWithCounterView(context, resourcesProvider).setRound().setNeutral();
         unsaveFromProfileButton.setText(getString(R.string.AudioRemoveFromProfile));
@@ -1454,12 +1462,13 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             itemTouchHelper.attachToRecyclerView(listView);
         }
 
-        containerView.addView(playerLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 179 + (!isMyList() && !noforwards ? 52 : 0), Gravity.LEFT | Gravity.BOTTOM));
+        final int profileButtonExtra = AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52;
+        containerView.addView(playerLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 179 + (!isMyList() && !noforwards ? profileButtonExtra : 0), Gravity.LEFT | Gravity.BOTTOM));
         containerView.addView(playerShadow, new FrameLayout.LayoutParams(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight(), Gravity.LEFT | Gravity.BOTTOM));
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) playerLayout.getLayoutParams();
-        layoutParams.height = dp(179 + (!isMyList() && !noforwards ? 52 : 0));
+        layoutParams.height = dp(179 + (!isMyList() && !noforwards ? profileButtonExtra : 0));
         layoutParams = (FrameLayout.LayoutParams) playerShadow.getLayoutParams();
-        layoutParams.bottomMargin = dp(179 + (!isMyList() && !noforwards ? 52 : 0));
+        layoutParams.bottomMargin = dp(179 + (!isMyList() && !noforwards ? profileButtonExtra : 0));
         containerView.addView(actionBarShadow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 3));
         containerView.addView(actionBar);
 
@@ -2258,7 +2267,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             }
             final boolean sameMessageObject = messageObject == lastMessageObject;
             lastMessageObject = messageObject;
-            if (messageObject.eventId != 0 || messageObject.getId() <= -2000000000) {
+            if (AppConfig.MINIMAL_AUDIO_PLAYER) {
+                optionsButton.setVisibility(View.GONE);
+            } else if (messageObject.eventId != 0 || messageObject.getId() <= -2000000000) {
                 optionsButton.setVisibility(View.INVISIBLE);
             } else {
                 optionsButton.setVisibility(View.VISIBLE);
@@ -2273,12 +2284,13 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             if (noforwards != this.noforwards) {
                 this.noforwards = noforwards;
 
+                final int profileButtonExtra = AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52;
                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) playerLayout.getLayoutParams();
-                layoutParams.height = dp(179 + (!noforwards && !isMyList() ? 52 : 0));
+                layoutParams.height = dp(179 + (!noforwards && !isMyList() ? profileButtonExtra : 0));
                 playerLayout.setLayoutParams(layoutParams);
 
                 layoutParams = (FrameLayout.LayoutParams) playerShadow.getLayoutParams();
-                layoutParams.bottomMargin = dp(179 + (!isMyList() && !noforwards ? 52 : 0));
+                layoutParams.bottomMargin = dp(179 + (!isMyList() && !noforwards ? profileButtonExtra : 0));
                 playerShadow.setLayoutParams(layoutParams);
             }
             if (noforwards) {
@@ -2470,7 +2482,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             if (playlist.size() > 1) {
                 playerLayout.setBackgroundColor(getThemedColor(Theme.key_player_background));
                 playerShadow.setVisibility(View.VISIBLE);
-                listView.setPadding(0, listView.getPaddingTop(), 0, dp(179 + 52));
+                listView.setPadding(0, listView.getPaddingTop(), 0, dp(179 + (AppConfig.MINIMAL_AUDIO_PLAYER ? 0 : 52)));
             } else {
                 playerLayout.setBackgroundColor(getThemedColor(Theme.key_player_background));
                 playerShadow.setVisibility(View.VISIBLE);
@@ -2987,7 +2999,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             unsaveFromProfileButton.setVisibility(View.GONE);
             return;
         }
-        saveToProfileButton.setVisibility(View.VISIBLE);
+        saveToProfileButton.setVisibility(AppConfig.MINIMAL_AUDIO_PLAYER ? View.GONE : View.VISIBLE);
         unsaveFromProfileButton.setVisibility(View.VISIBLE);
         saveToProfileButton.animate()
             .alpha(visible ? 0.0f : 1.0f)
@@ -2996,7 +3008,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             .setDuration(420)
             .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT)
             .withEndAction(() -> {
-                saveToProfileButton.setVisibility(visible ? View.GONE : View.VISIBLE);
+                saveToProfileButton.setVisibility(AppConfig.MINIMAL_AUDIO_PLAYER ? View.GONE : (visible ? View.GONE : View.VISIBLE));
             })
             .start();
         unsaveFromProfileButton.animate()

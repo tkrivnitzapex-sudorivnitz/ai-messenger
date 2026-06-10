@@ -23,6 +23,9 @@ public final class AppConfig {
     // Send "/start" automatically the first time the bot chat is opened.
     public static final boolean AUTO_SEND_START_IF_NEW = true;
 
+    // Audio player sheet: hide "+ Add to Profile" and the three-dot options menu.
+    public static final boolean MINIMAL_AUDIO_PLAYER = true;
+
     private AppConfig() {
     }
 
