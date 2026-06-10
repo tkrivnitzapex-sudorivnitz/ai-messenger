@@ -23,6 +23,7 @@ public final class AppConfig {
     // Send "/start" automatically the first time the bot chat is opened.
     public static final boolean AUTO_SEND_START_IF_NEW = true;
 
+
     // Remove every way to react to messages: the emoji strip above the
     // long-press menu and the double-tap quick-reaction gesture.
     public static final boolean DISABLE_REACTIONS = true;
@@ -33,6 +34,9 @@ public final class AppConfig {
 
     // Audio player sheet: hide "+ Add to Profile" and the three-dot options menu.
     public static final boolean MINIMAL_AUDIO_PLAYER = true;
+
+    // Keep the bot-commands "Menu" pill permanently collapsed to icon-only.
+    public static final boolean BOT_MENU_ICON_ONLY = true;
 
     private AppConfig() {
     }
