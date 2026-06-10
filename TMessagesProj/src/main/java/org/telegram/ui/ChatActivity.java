@@ -31661,7 +31661,7 @@ public class ChatActivity extends BaseFragment implements
                 for (int a = 0, N = items.size(); a < N; a++) {
                     ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getParentActivity(), a == 0, a == N - 1, themeDelegate);
                     cell.setMinimumWidth(AndroidUtilities.dp(200));
-                    cell.setTextAndIcon(items.get(a), icons.get(a));
+                    cell.setTextAndIcon(items.get(a), app.aimessenger.ApexIcons.remap(icons.get(a)));
                     Integer option = options.get(a);
                     if (option == OPTION_DELETE && selectedObject != null) {
                         if (selectedObject.messageOwner.ttl_period != 0) {
